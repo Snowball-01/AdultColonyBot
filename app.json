@@ -1,0 +1,19 @@
+{
+  "name": "AdultColonyBot",
+  "description": "Telegram Bot to download Porn videos & mega files through links",
+  "logo": "https://telegra.ph/file/0c2fb3d5aaff0e0dd69d2.jpg",
+  "keywords": [
+    "AdultColonyBot",
+    "Mongo DB",
+    "porn",
+    "PornHub",
+    "adult content",
+    "telegram bot",
+    "porn downloader bot",
+    "snowball"
+  ],
+  "repository": "https://github.com/Snowball-01/AdultColonyBot",
+  "success_url": "",
+  "stack": "container",
+  "env": {}
+}
