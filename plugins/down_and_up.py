@@ -132,7 +132,7 @@ async def download(url, query, ms):
 
 async def download_javhd(message, url, userid):
     await message.edit(
-        f"🔗 Lɪɴᴋ :- `{url}`\n\n **Fetching Downloadable Link ♻️**\n\n**⚠️ It might take few seconds as it's using some algorithm to fetch downloadable link **\nHave Patiences Don't Be Too Horny"
+        f"🔗 Lɪɴᴋ :- `{url}`\n\n **Fetching Downloadable Link ♻️**\n\n**⚠️ It might take few seconds as it's using some algorithm to fetch downloadable link **\n> Have Patiences Don't Be Too Horny"
     )
     download_link = await extract_m3u8_url(url)
     fileName = url.split("/")[-2].capitalize()

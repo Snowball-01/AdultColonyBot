@@ -420,7 +420,7 @@ async def filter_spankbang_playlist(url):
 
 
 async def get_thumbnail(video_url):
-
+    
     if "spankbang.party" in video_url:
         return await get_spank_bang_thumb(video_url=video_url)
 

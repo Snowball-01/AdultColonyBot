@@ -24,7 +24,7 @@ class Config(object):
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1001971176803"))  # ⚠️ Required
     SHORTENER_API = os.environ.get("SHORTENER_API", "https://runurl.in/api?api=d0e0909f2c1e5f1130e4b643cdba7e39a28341eb&url=") # ⚠️ SHOULD BE LIKE THIS "https://linkshortx.in/api?api=6d6c7e8296ddcd718fc808d70dc39349b12f377c&url="
     DUMP_VIDEOS = int(os.environ.get("DUMP_VIDEOS", "-1002129817205")) # ⚠️ Required
-    API = os.environ.get("API", "http://192.168.0.101:3000") # ⚠️ Must not ends with '/'
+    API = os.environ.get("API", "http://82.180.131.185:3000") # ⚠️ Must not ends with '/'
 
     # wes response configuration
     WEBHOOK = bool(os.environ.get("WEBHOOK", False))
