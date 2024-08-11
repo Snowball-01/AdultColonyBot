@@ -36,7 +36,7 @@ async def start(client: Client, message: Message):
                 # Calculate expiration datetime
                 expiration_time = datetime.now() + timedelta(hours=int(decrypt[1]))
 
-                if decrypt[0] not in temp.TOKEN:
+                if int(decrypt[0]) not in temp.TOKEN:
                     temp.TOKEN[int(decrypt[0])] = expiration_time.strftime(
                         "%Y-%m-%d %H:%M:%S"
                     )

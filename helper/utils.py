@@ -442,8 +442,11 @@ async def get_thumbnail(video_url):
     elif "javhd.today" in video_url:
         return await get_javhdtoday_thumb(video_url=video_url)
 
-    elif "javhd.icu" in video_url:
-        return await get_javhdicu_thumb(video_url=video_url)
+    elif "javtsunami.com" in video_url:
+        return await get_javtsunami_thumb(video_url=video_url)
+
+    elif "javgiga.com" in video_url:
+        return await get_javgiga_thumb(video_url=video_url)
 
     ydl_opts = {
         "format": "best",
@@ -540,7 +543,7 @@ async def get_javhdtoday_thumb(video_url):
     )["src"]
 
 
-async def get_javhdicu_thumb(video_url):
+async def get_javtsunami_thumb(video_url):
     async with aiohttp.ClientSession() as session:
         async with session.get(video_url) as response:
             if response.status != 200:
@@ -548,9 +551,18 @@ async def get_javhdicu_thumb(video_url):
             html_content = await response.text()
 
     thumb = BeautifulSoup(html_content, "html5lib")
-    return thumb.findAll("meta", attrs={"property": "og:image:secure_url"})[0][
-        "content"
-    ]
+    return thumb.findAll("figure", attrs={"class": "wp-block-image size-large"})[0].find("img").get("data-lazy-src")
+
+
+async def get_javgiga_thumb(video_url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(video_url) as response:
+            if response.status != 200:
+                return None
+            html_content = await response.text()
+
+    thumb = BeautifulSoup(html_content, "html5lib")
+    return thumb.findAll("img", attrs={"decoding": "async"})[0].get("src")
 
 
 async def download_thumbnail(thumbnail_url, thumbnail_path):
