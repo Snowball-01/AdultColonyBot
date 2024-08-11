@@ -12,7 +12,7 @@ from config import Config
 from helper.database import db
 
 
-regex_search = r'(?:https?:\/\/)?(?:www\.)?(?:spankbang\.party|pornhub\.com|pornhub\.org|xnxx\.com|xvideos\.com|japanhdv\.com|javhd\.today|javhd\.icu|javtsunami\.com|javgiga.com|japteenx\.com|kissjav\.com|xhamster\.com|hentaifox\.com|eporner\.com)'
+regex_search = r'(?:https?:\/\/)?(?:www\.)?(?:spankbang\.party|spankbang\.com|pornhub\.com|pornhub\.org|xnxx\.com|xvideos\.com|japanhdv\.com|javhd\.today|javhd\.icu|javtsunami\.com|javgiga.com|japteenx\.com|kissjav\.com|xhamster\.com|hentaifox\.com|eporner\.com)'
 
 
 @Client.on_message(filters.private & filters.regex(regex_search))

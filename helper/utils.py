@@ -262,22 +262,24 @@ async def extract_m3u8_url(raw_url):
 
         # Extracting URLs
         urls = [re.search(pattern, link).group(1) for link in allinks]
-        link = [link for link in urls if "kissmovies" in link]
-        if not link:
+        links = [link for link in urls if "kissmovies" in link or "cloudwish.xyz" in link or "mycloudz.cc" in link]
+        if not links:
             return None
+        for link in links:
+            scraper = cloudscraper.create_scraper()
+            info = scraper.get(link)
+            soup = BeautifulSoup(info.text, "html5lib")
 
-        scraper = cloudscraper.create_scraper()
-        info = scraper.get(link[0])
-        soup = BeautifulSoup(info.text, "html5lib")
-
-        # Find the JavaScript variable containing the setup parameters
-        script = soup.findAll("script", attrs={"type": "text/javascript"})[3]
-        fileData = await file_data(script.string)
-        match = re.search(r'file:"([^"]+)"', str(fileData))
-        if match:
-            file_url = match.group(1)
-            return file_url
-        else:
+            # Find the JavaScript variable containing the setup parameters
+            script = soup.findAll("script", attrs={"type": "text/javascript"})[3]
+            fileData = await file_data(script.string)
+            match = re.search(r'file:"([^"]+)"', str(fileData))
+            if match:
+                file_url = match.group(1)
+                return file_url
+            else:
+                continue
+        if not match:
             return None
 
     elif "javtsunami.com" in raw_url:
@@ -307,21 +309,25 @@ async def extract_m3u8_url(raw_url):
         r = scrap.get(raw_url)
         response = BeautifulSoup(r.text, "html5lib")
         script = [link.get("src") for link in response.find_all("iframe")]
-        script = [link for link in script if "javtiktok.site" in link]
+        script = [link for link in script if "javtiktok.site" in link or "javhahaha" in link]
         if not script:
             return None
         
-        link = scrap.get(script[0])
-        getLink = BeautifulSoup(link.text, "html5lib")
-        fileData = await file_data(
-            getLink.findAll("script", attrs={"type": "text/javascript"})[3].string
-        )
+        for link in script:
+            res = scrap.get(link)
+            getLink = BeautifulSoup(res.text, "html5lib")
+            fileData = await file_data(
+                getLink.findAll("script", attrs={"type": "text/javascript"})[3].string
+            )
 
-        match = re.search(r'file:"([^"]+)"', str(fileData))
-        if match:
-            file_url = match.group(1)
-            return file_url
-        else:
+            match = re.search(r'file:"([^"]+)"', str(fileData))
+            if match:
+                file_url = match.group(1)
+                return file_url
+            else:
+                continue
+
+        if not match:
             return None
 
     else:
@@ -332,7 +338,7 @@ async def download_m3u8_with_ffmpeg(message, url, output_file):
 
     await message.edit("**ᴠᴇʀɪғʏɪɴɢ ᴛʜᴇ sᴏᴜʀᴄᴇ** ⌛")
     # Use ffmpeg to download the M3U8 stream and save it to a file
-    cmd = f"ffmpeg -threads 4 -i {url} -c copy {output_file}"
+    cmd = f"ffmpeg -threads 8 -i {url} -c copy {output_file}"
     process = await asyncio.create_subprocess_exec(
         *cmd.split(), stderr=asyncio.subprocess.PIPE
     )
@@ -372,7 +378,7 @@ async def download_m3u8_with_ffmpeg(message, url, output_file):
 
                 try:
                     await message.edit(
-                        f"📥 **ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...**\n\n`{progress:.2f}%` **{progress_bar}**\n\n>⚠️ ᴡʜʏ sʟᴏᴡ :- Fɪʀsᴛʟʏ, ᴛʜᴇ ᴠɪᴅᴇᴏs ᴏɴ ᴛʜᴇ sɪᴛᴇs ᴇᴍᴘʟᴏʏ ʀᴏʙᴜsᴛ DMC ᴄᴏɴᴛᴇɴᴛ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ ᴍᴇᴄʜᴀɴɪsᴍs, ʀᴇɴᴅᴇʀɪɴɢ ᴛʜᴇ ᴇxᴛʀᴀᴄᴛɪᴏɴ ᴏғ ᴠɪᴅᴇᴏ ᴅᴀᴛᴀ ᴀʀᴅᴜᴏᴜs. Sᴇᴄᴏɴᴅʟʏ, ᴀʟʟ ᴛʜᴇ ᴠɪᴅᴇᴏs ʜᴏsᴛᴇᴅ ᴏɴ ᴛʜɪs ᴘʟᴀᴛғᴏʀᴍ ʙᴏᴀsᴛ ғɪʟᴇ sɪᴢᴇs ᴍᴇᴀsᴜʀᴇᴅ ɪɴ ɢɪɢᴀʙʏᴛᴇs, ᴀᴛᴛʀɪʙᴜᴛᴀʙʟᴇ ᴛᴏ ᴛʜᴇɪʀ ᴇxᴛᴇɴᴅᴇᴅ ᴅᴜʀᴀᴛɪᴏɴ ʀᴀɴɢɪɴɢ ғʀᴏᴍ 2 ᴛᴏ 4 ʜᴏᴜʀs ᴘᴇʀ ᴍᴏᴠɪᴇ."
+                        f"📥 **ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ...**\n\n`{progress:.2f}%` **{progress_bar}**\n\n> 💫 **sᴛʀᴇᴀᴍ ʟɪɴᴋ :-** `{url}`"
                     )
                 except:
                     pass

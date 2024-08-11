@@ -166,11 +166,6 @@ async def handle_clear_queue(bot: Client, message: Message):
         if os.path.exists(f"downloads/{user}"):
             shutil.rmtree(f"downloads/{user}")
 
-    if user in temp.TOKEN:
-        temp.TOKEN.pop(user)
-        if os.path.exists(f"downloads/{user}"):
-            shutil.rmtree(f"downloads/{user}")
-
     if user in temp.PLAYLIST_DOWNLOAD:
         temp.PLAYLIST_DOWNLOAD.pop(user)
         if os.path.exists(f"downloads/{user}"):
