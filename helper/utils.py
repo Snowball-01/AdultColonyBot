@@ -338,7 +338,7 @@ async def download_m3u8_with_ffmpeg(message, url, output_file):
 
     await message.edit("**ᴠᴇʀɪғʏɪɴɢ ᴛʜᴇ sᴏᴜʀᴄᴇ** ⌛")
     # Use ffmpeg to download the M3U8 stream and save it to a file
-    cmd = f"ffmpeg -threads 8 -i {url} -c copy {output_file}"
+    cmd = f"ffmpeg -threads 4 -i {url} -c copy {output_file}"
     process = await asyncio.create_subprocess_exec(
         *cmd.split(), stderr=asyncio.subprocess.PIPE
     )
