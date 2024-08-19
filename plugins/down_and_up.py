@@ -118,7 +118,7 @@ async def download(url, query, ms):
     ydl_opts = {
         "outtmpl": os.path.join(f"downloads/{query.from_user.id}", file_name),
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        # "progress_hooks": [lambda d: print_progress(d, ms)],
+        "progress_hooks": [lambda d: print_progress(d, ms)],
     }
     loop = asyncio.get_event_loop()
     with YoutubeDL(ydl_opts) as ydl:
