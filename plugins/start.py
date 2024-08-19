@@ -24,46 +24,17 @@ logger = logging.getLogger(__name__)
 async def start(client: Client, message: Message):
 
     if message.command[0] == "start" and len(message.command) == 2:
-        if not message.command[1].startswith(Config.BOT_USERNAME):
-            decrypt = b64_to_str(message.command[1]).split(":")
-            token = await db.get_token(decrypt[2])
-            if token:
-                return await message.reply_text(
-                    f"> ** Token Already Redeemed By - ** `{token['username']}`\n\n** 💫 Generate Different Token Use /gentoken **",
-                    reply_to_message_id=message.id,
-                )
-            if int(decrypt[0]) == message.from_user.id:
-                # Calculate expiration datetime
-                expiration_time = datetime.now() + timedelta(hours=int(decrypt[1]))
-
-                if int(decrypt[0]) not in temp.TOKEN:
-                    temp.TOKEN[int(decrypt[0])] = expiration_time.strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                    await message.reply_text(
-                        f"** Token Generated Successfully ✅ **\n\n> ** Token Expiration Time: ** `{expiration_time.strftime('%Y-%m-%d %H:%M:%S')}`",
-                        reply_to_message_id=message.id,
-                    )
-                    await db.add_token(decrypt[2], message.from_user.first_name)
-                return
-            else:
-                return await message.reply_text(
-                    "> ** You Can't Redeem Other's Token **\n\n** 💫 Generate Different Token Use /gentoken ** ❄️",
-                    reply_to_message_id=message.id,
-                )
-
-        else:
-            message_id = b64_to_str(message.command[1].split("_")[1])
-            try:
-                return await client.copy_message(
-                    chat_id=message.from_user.id,
-                    from_chat_id=Config.DUMP_VIDEOS,
-                    message_id=int(message_id),
-                )
-            except:
-                return await message.reply_text(
-                    "**ғɪʟᴇ ɪs ᴅᴇʟᴇᴛᴇᴅ ʙʏ ᴀᴅᴍɪɴ** ❄️", reply_to_message_id=message.id
-                )
+        message_id = b64_to_str(message.command[1].split("_")[1])
+        try:
+            return await client.copy_message(
+                chat_id=message.from_user.id,
+                from_chat_id=Config.DUMP_VIDEOS,
+                message_id=int(message_id),
+            )
+        except:
+            return await message.reply_text(
+                "**ғɪʟᴇ ɪs ᴅᴇʟᴇᴛᴇᴅ ʙʏ ᴀᴅᴍɪɴ** ❄️", reply_to_message_id=message.id
+            )
 
     user = message.from_user
     button = InlineKeyboardMarkup(
