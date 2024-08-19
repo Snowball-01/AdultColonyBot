@@ -36,7 +36,6 @@ async def cache_file(fileInfo, url, bot, query, user_id, user_status):
                         user_status["plan"] == "free"
                         and user_id not in Config.ADMIN
                         and Config.SHORTENER_API
-                        and user_id not in temp.TOKEN
                     ):
 
                         uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(fileInfo['msg_id']))}"
@@ -252,7 +251,6 @@ async def OnlyUpload(
                 user_status["plan"] == "free"
                 and user_id not in Config.ADMIN
                 and Config.SHORTENER_API
-                and user_id not in temp.TOKEN
             ):
                 uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
                 shorturl = f"{Config.SHORTENER_API}https://t.me/{Config.BOT_USERNAME}?start={uuid}&format=text"
