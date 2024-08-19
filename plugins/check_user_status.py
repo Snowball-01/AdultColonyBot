@@ -33,25 +33,4 @@ async def handle_plan_expire(bot, cmd):
             f"Hᴇʏ, {cmd.from_user.mention}\n\n**Yᴏᴜʀ ᴘʟᴀɴ ɪs ᴇxᴘɪʀᴇᴅ ᴘʟᴇᴀsᴇ ᴜᴘᴅᴀᴛᴇ ʏᴏᴜʀ ᴘʟᴀɴ ᴛᴏ ɢᴇᴛ ᴀᴄᴄᴇss ᴏғ ᴀʟʟ ᴛʜᴇ ғᴇᴀᴛᴜʀᴇs ☹️**"
         )
 
-
-async def handle_token_expire(bot, cmd):
-
-    chat_id = cmd.from_user.id
-
-    if chat_id in temp.TOKEN:
-        # Convert the string to a datetime object
-        user_token_time = temp.TOKEN[chat_id]
-        print(user_token_time)
-        date_obj = datetime.strptime(user_token_time, "%Y-%m-%d %H:%M:%S")
-
-        # Get the current datetime
-        current_datetime = datetime.strptime(
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"
-        )
-
-        if current_datetime > date_obj:
-            temp.TOKEN.pop(chat_id)
-            await cmd.reply_text("> ⚠️ ** Token Expired. Please Generate New Token By Using /gentoken **")
-            return
-
     await cmd.continue_propagation()
