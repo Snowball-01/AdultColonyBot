@@ -7,7 +7,7 @@ from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, Peer
 import os, sys, time, asyncio, logging, datetime
 from helper.utils import start_clone_bot, client
 from plugins.session import generate_session
-from .check_user_status import handle_user_status, handle_plan_expire, handle_token_expire
+from .check_user_status import handle_user_status, handle_plan_expire
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,8 +18,7 @@ async def _(bot, cmd):
     await handle_user_status(bot, cmd)
     if Config.SHORTENER_API:
         await handle_plan_expire(bot, cmd)
-    
-    await handle_token_expire(bot, cmd)
+
     await cmd.continue_propagation()
 
 @Client.on_message(filters.command(["stats", "status"]) & filters.user(Config.ADMIN))
