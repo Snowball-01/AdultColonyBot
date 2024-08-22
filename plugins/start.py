@@ -108,6 +108,7 @@ async def cb_handler(client, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("• ʙᴀᴄᴋ", callback_data="start")],
+                    [InlineKeyboardButton("🍣 ᴊᴀᴘᴀɴᴇsᴇ", callback_data="jap")],
                     [
                         InlineKeyboardButton(
                             "xɴxx", switch_inline_query_current_chat="@Xnxx"
@@ -132,7 +133,12 @@ async def cb_handler(client, query: CallbackQuery):
                             "ᴇᴘᴏʀɴᴇʀ", switch_inline_query_current_chat="@Eporner"
                         ),
                     ],
-                    [InlineKeyboardButton("🍣 ᴊᴀᴘᴀɴᴇsᴇ", callback_data="jap")],
+                    [
+                        InlineKeyboardButton(
+                            "ғᴜʟʟx ᴄɪɴᴇᴍᴀ",
+                            switch_inline_query_current_chat="@FullxCinema",
+                        )
+                    ],
                 ]
             ),
         )

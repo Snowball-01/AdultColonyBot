@@ -11,6 +11,7 @@ from youtube_dl import YoutubeDL, DownloadError
 from config import Config, temp
 from helper.utils import (
     client,
+    fetch_fullxcinema,
     fix_thumb,
     progress_for_pyrogram,
     format_duration,
@@ -429,9 +430,16 @@ async def queue_download(bot, query, url):
     )
 
     download_success = False
+    fullxcinema_raw = None
 
     if "javhd.today" in url or "javhd.icu" in url or "javtsunami.com" in url or "javgiga.com" in url:
         download_success = await download_javhd(ms, url, user_id)
+    
+    elif "fullxcinema.com" in url:
+        fullxcinema_raw = url
+        url = await fetch_fullxcinema(url)
+        download_success = await download(url, query, ms)
+        
     elif "eporner.com" in url:
         rs = requests.get(url)
         soup = BeautifulSoup(rs.text, "html5lib")
@@ -448,7 +456,7 @@ async def queue_download(bot, query, url):
 
     print("Download Done ✅")
     await ms.edit("**Fetching Thumbnail.... 🔃**")
-    thumb_url = await get_thumbnail(video_url=url)
+    thumb_url = await get_thumbnail(video_url=url if not fullxcinema_raw else fullxcinema_raw)
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
     await download_thumbnail(thumb_url, thumbnail_filename)
 
@@ -490,24 +498,30 @@ async def single_download(bot, query, url, default_url=None):
     )
 
     download_success = False
+    fullxcinema_raw = None
 
     if "javhd.today" in url or "javhd.icu" in url or "javtsunami.com" in url or "javgiga.com" in url:
         download_success = await download_javhd(ms, url, user_id)
         if download_success == 0:
             await ms.edit("** Download Failed ❌ **")
             return
+    elif "fullxcinema.com" in url:
+        fullxcinema_raw = url
+        url = await fetch_fullxcinema(url)
+         
     else:
         if url.startswith("/dload"):
             url = "https://www.eporner.com" + url
-        download_success = await download(url, query, ms)
-        if download_success == 0:
-            await ms.edit("** Download Failed ❌ **")
-            return
+            
+    download_success = await download(url, query, ms)
+    if download_success == 0:
+        await ms.edit("** Download Failed ❌ **")
+        return
 
     print("Download Done ✅")
     await ms.edit("**Fetching Thumbnail.... 🔃**")
 
-    thumbnail_url = await get_thumbnail(default_url if default_url else url)
+    thumbnail_url = await get_thumbnail(default_url if default_url else url if not fullxcinema_raw else fullxcinema_raw)
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
     await download_thumbnail(thumbnail_url, thumbnail_filename)
 

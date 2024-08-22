@@ -187,6 +187,56 @@ async def extract_percentage(string):
 #             client, message, to_edit)).start()
 
 
+async def fetch_fullxcinema(url: str) -> str:
+    """
+    Fetches the direct download URL of a video from a given FullXcinema link.
+
+    This function first retrieves the embedded video URL from the provided FullXcinema page.
+    It then extracts the direct download link from the embedded video source.
+
+    Args:
+        url (str): The URL of the FullXcinema page containing the embedded video.
+
+    Returns:
+        str: The direct download URL of the video.
+
+    Raises:
+        ValueError: If no video URL or download URL is found.
+    """
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+    }
+    
+    # Fetch the page content
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Ensure the request was successful
+    
+    soup = BeautifulSoup(response.text, 'html5lib')
+    
+    # Extract the embedded video URL from the iframe
+    iframe = soup.find("iframe")
+    if not iframe:
+        raise ValueError("No iframe found in the provided URL")
+    
+    video_url = iframe.get("src")
+    
+    # Fetch the embedded video page content
+    video_response = requests.get(video_url, headers=headers)
+    video_response.raise_for_status()
+    
+    video_soup = BeautifulSoup(video_response.text, 'html5lib')
+    
+    # Extract the direct download URL from the video source
+    source = video_soup.find('source')
+    if not source:
+        raise ValueError("No video source found in the embedded video")
+    
+    download_url = source.get('src')
+    
+    return download_url
+
+
 def is_plan_expire(formatted_date):
     # Convert formatted_date string to datetime object
     expire_date = datetime.strptime(formatted_date, "%Y-%m-%d")
@@ -453,6 +503,9 @@ async def get_thumbnail(video_url):
 
     elif "javgiga.com" in video_url:
         return await get_javgiga_thumb(video_url=video_url)
+    
+    elif "fullxcinema.com" in video_url:
+        return await get_fullxcinema_thumb(video_url=video_url)
 
     ydl_opts = {
         "format": "best",
@@ -569,6 +622,19 @@ async def get_javgiga_thumb(video_url):
 
     thumb = BeautifulSoup(html_content, "html5lib")
     return thumb.findAll("img", attrs={"decoding": "async"})[0].get("src")
+
+
+async def get_fullxcinema_thumb(video_url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(video_url) as response:
+            if response.status != 200:
+                return None
+            html_content = await response.text()
+
+    thumb = BeautifulSoup(html_content, "html5lib")
+    return thumb.findAll("meta", attrs={"itemprop": "thumbnailUrl"})[0].get("content")
+
+
 
 
 async def download_thumbnail(thumbnail_url, thumbnail_path):

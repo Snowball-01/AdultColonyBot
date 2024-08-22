@@ -394,6 +394,47 @@ async def search(client, InlineQuery: InlineQuery):
         await InlineQuery.answer(results, switch_pm_text=f"Search Results", switch_pm_parameter="start")
         return
 
+    elif query.strip().lower().startswith("@fullxcinema"):
+        userquery = re.sub("@fullxcinema", "", query.strip().lower()).strip()
+
+        if userquery.isnumeric():
+            page = userquery
+            userquery = 'chinese'
+        else:
+            number, string_without_number = await extract_number_and_remove(
+                userquery)
+            if number:
+                page = number
+                userquery = string_without_number
+            else:
+                page = 1
+
+            if userquery == "":
+                userquery = 'korean'
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{Config.API}/fullxcinema/search?key={userquery}&page={page}') as resp:
+                response = await resp.json()
+                data = response['data']
+
+                for video in data:
+                    results.append(InlineQueryResultArticle(
+                        title=video['title'],
+                        input_message_content=InputTextMessageContent(
+                            message_text=video['link']
+                        ),
+                        description=f"Dᴜʀᴀᴛɪᴏɴ : {video['duration']}\nVɪᴇᴡs : {video['views']}\nRᴀᴛɪɴɢ : {video['rating']}",
+                        thumb_url=video['image'],
+                        reply_markup=InlineKeyboardMarkup([[
+                            InlineKeyboardButton(
+                                "Wᴀᴛᴄʜ Oɴʟɪɴᴇ", url=video['link']),
+                            InlineKeyboardButton(
+                                "Sᴇᴀʀᴄʜ Mᴏʀᴇ", switch_inline_query_current_chat=f"{query}")
+                        ]])
+                    ))
+        await InlineQuery.answer(results, switch_pm_text=f"Search Results", switch_pm_parameter="start")
+        return
+
     elif query.strip().lower().startswith("@hentaifox"):
         userquery = re.sub("@hentaifox", "", query.strip().lower()).strip()
 
