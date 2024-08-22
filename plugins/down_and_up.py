@@ -87,7 +87,7 @@ async def cache_file(fileInfo, url, bot, query, user_id, user_status):
 def print_progress(d, ms):
 
     if d["status"] == "downloading":
-        message = f"ㅤ\n**Downloading:** `{d['_percent_str']}` ** of ** `{d['_total_bytes_str']}` ** at ** `{d['_speed_str']}`\n\n** ETA: ** `{d['_eta_str']}`"
+        message = f"**Downloading:** `{d['_percent_str']}` ** of ** `{d['_total_bytes_str']}` ** at ** `{d['_speed_str']}`\n\n** ETA: ** `{d['_eta_str']}`"
         try:
             ms.edit(message, disable_web_page_preview=True)
         except:
