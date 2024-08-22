@@ -49,8 +49,8 @@ class Txt(object):
 ➥ Lɪʙʀᴀʀy : <a href=https://github.com/pyrogram>Pyʀᴏɢʀᴀᴍ</a>
 ➥ Lᴀɴɢᴜᴀɢᴇ: <a href=https://www.python.org>Pyᴛʜᴏɴ 3</a>
 ➥ Dᴀᴛᴀ Bᴀꜱᴇ: <a href=https://cloud.mongodb.com>Mᴏɴɢᴏ DB</a>
-➥ ᴍʏ ꜱᴇʀᴠᴇʀ : <a href=https://dashboard.heroku.com>Heroku</a>
-➥ ᴠᴇʀsɪᴏɴ : v2.6.0
+➥ ᴍʏ ꜱᴇʀᴠᴇʀ : <b>VPS</b>
+➥ ᴠᴇʀsɪᴏɴ : v2.6.2
 """
 
     DONATE = "<b>Your generous donation, no matter the amount, is sincerely appreciated and will greatly support our bot's development.</b>\n\n<b>UPI ID -</b> <code>ritesh.r8@paytm</code>"
@@ -63,6 +63,7 @@ class Txt(object):
 💫 Xvideos
 💫 Xhamster
 💫 SpankBang
+💫 FullxCinema
 💫 JapanHdv
 💫 JapTeenx
 💫 KissJav
