@@ -475,7 +475,7 @@ async def queue_download(bot, query, url):
         thumbnail_filename=thumbnail_filename,
         ms=ms,
         user_bot=user_bot,
-        downloadurl=url,
+        downloadurl=url if not fullxcinema_raw else fullxcinema_raw,
     )
 
 
@@ -540,5 +540,5 @@ async def single_download(bot, query, url, default_url=None):
         thumbnail_filename=thumbnail_filename,
         ms=ms,
         user_bot=user_bot,
-        downloadurl=url,
+        downloadurl=url if not fullxcinema_raw else fullxcinema_raw,
     )
