@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import sys
 from config import Config, temp
 from helper.database import Database
-from helper.utils import is_plan_expire
+from helper.utils import is_plan_expire, is_token_expired
 
 db = Database(Config.DB_URL, Config.BOT_USERNAME)
 
@@ -33,4 +33,13 @@ async def handle_plan_expire(bot, cmd):
             f"Hᴇʏ, {cmd.from_user.mention}\n\n**Yᴏᴜʀ ᴘʟᴀɴ ɪs ᴇxᴘɪʀᴇᴅ ᴘʟᴇᴀsᴇ ᴜᴘᴅᴀᴛᴇ ʏᴏᴜʀ ᴘʟᴀɴ ᴛᴏ ɢᴇᴛ ᴀᴄᴄᴇss ᴏғ ᴀʟʟ ᴛʜᴇ ғᴇᴀᴛᴜʀᴇs ☹️**"
         )
 
+async def handle_token_expire(bot, cmd):
+    chat_id = cmd.from_user.id
+    
+    user_status = await db.get_user_status(chat_id)
+    if user_status["plan"] == "free":
+        token_expire_on = await db.get_token(chat_id)
+        if token_expire_on and is_token_expired(token_expire_on):
+            await db.remove_token(chat_id)
+    
     await cmd.continue_propagation()
