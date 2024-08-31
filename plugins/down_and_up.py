@@ -33,43 +33,24 @@ async def cache_file(fileInfo, url, bot, query, user_id, user_status):
         for fileInfo in fileInfo:
             if str(fileInfo["link"]).endswith(url):
                 try:
-                    if (
-                        user_status["plan"] == "free"
-                        and user_id not in Config.ADMIN
-                        and Config.SHORTENER_API
-                    ):
-
-                        uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(fileInfo['msg_id']))}"
-                        shorturl = f"{Config.SHORTENER_API}https://t.me/{Config.BOT_USERNAME}?start={uuid}&format=text"
-                        url = await fetch_shorturl(shorturl=shorturl)
-                        file = await bot.get_messages(
-                            Config.DUMP_VIDEOS, int(fileInfo["msg_id"])
-                        )
-                        btn = [[InlineKeyboardButton("📥 Download 📥", url=f"{url}")]]
-                        await bot.send_message(
-                            chat_id=user_id,
-                            text=f"{file.caption}\n\n👑 Upgrade to get direct files /upgrade",
-                            entities=file.caption_entities,
-                            reply_markup=InlineKeyboardMarkup(btn),
-                        )
-
-                    else:
-                        uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(fileInfo['msg_id']))}"
-                        await bot.copy_message(
-                            query.from_user.id,
-                            Config.DUMP_VIDEOS,
-                            int(fileInfo["msg_id"]),
-                            reply_markup=InlineKeyboardMarkup(
+                    uuid = (
+                        f"{Config.BOT_USERNAME}_{str_to_b64(str(fileInfo['msg_id']))}"
+                    )
+                    await bot.copy_message(
+                        query.from_user.id,
+                        Config.DUMP_VIDEOS,
+                        int(fileInfo["msg_id"]),
+                        reply_markup=InlineKeyboardMarkup(
+                            [
                                 [
-                                    [
-                                        InlineKeyboardButton(
-                                            "🌟 sʜᴀʀᴇ ɴᴏᴡ 🌟",
-                                            url=f"https://t.me/share/url?url=https://t.me/{Config.BOT_USERNAME}?start={uuid}",
-                                        )
-                                    ]
+                                    InlineKeyboardButton(
+                                        "🌟 sʜᴀʀᴇ ɴᴏᴡ 🌟",
+                                        url=f"https://t.me/share/url?url=https://t.me/{Config.BOT_USERNAME}?start={uuid}",
+                                    )
                                 ]
-                            ),
-                        )
+                            ]
+                        ),
+                    )
                 except:
                     await bot.send_video(
                         chat_id=query.message.chat.id,
@@ -87,7 +68,7 @@ async def cache_file(fileInfo, url, bot, query, user_id, user_status):
 def print_progress(d, ms):
 
     if d["status"] == "downloading":
-        message = f"**Downloading:** `{d['_percent_str']}` ** of ** `{d['_total_bytes_str']}` ** at ** `{d['_speed_str']}`\n\n** ETA: ** `{d['_eta_str']}`"
+        message = f"ㅤ\n**Downloading:** `{d['_percent_str']}` ** of ** `{d['_total_bytes_str']}` ** at ** `{d['_speed_str']}`\n\n** ETA: ** `{d['_eta_str']}`"
         try:
             ms.edit(message, disable_web_page_preview=True)
         except:
@@ -248,37 +229,22 @@ async def OnlyUpload(
                 fileInfo.caption,
             )
 
-            if (
-                user_status["plan"] == "free"
-                and user_id not in Config.ADMIN
-                and Config.SHORTENER_API
-            ):
-                uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
-                shorturl = f"{Config.SHORTENER_API}https://t.me/{Config.BOT_USERNAME}?start={uuid}&format=text"
-                url = await fetch_shorturl(shorturl=shorturl)
-                btn = [[InlineKeyboardButton("📥 Download 📥", url=f"{url}")]]
-                await bot.send_message(
-                    chat_id=user_id,
-                    text=f"{caption}\n\n**[📥 Click Here To Download Now 📥]({url})**\n\n**👑 Upgrade to get direct files /upgrade **",
-                    reply_markup=InlineKeyboardMarkup(btn),
-                )
-            else:
-                uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
-                await bot.copy_message(
-                    user_id,
-                    filz.chat.id,
-                    filz.id,
-                    reply_markup=InlineKeyboardMarkup(
+            uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
+            await bot.copy_message(
+                user_id,
+                filz.chat.id,
+                filz.id,
+                reply_markup=InlineKeyboardMarkup(
+                    [
                         [
-                            [
-                                InlineKeyboardButton(
-                                    "💫 sʜᴀʀᴇ ɴᴏᴡ 💫",
-                                    url=f"https://t.me/share/url?url=https://t.me/{Config.BOT_USERNAME}?start={uuid}",
-                                )
-                            ]
+                            InlineKeyboardButton(
+                                "💫 sʜᴀʀᴇ ɴᴏᴡ 💫",
+                                url=f"https://t.me/share/url?url=https://t.me/{Config.BOT_USERNAME}?start={uuid}",
+                            )
                         ]
-                    ),
-                )
+                    ]
+                ),
+            )
 
             os.remove(file_path)
             await ms.delete()
@@ -432,14 +398,19 @@ async def queue_download(bot, query, url):
     download_success = False
     fullxcinema_raw = None
 
-    if "javhd.today" in url or "javhd.icu" in url or "javtsunami.com" in url or "javgiga.com" in url:
+    if (
+        "javhd.today" in url
+        or "javhd.icu" in url
+        or "javtsunami.com" in url
+        or "javgiga.com" in url
+    ):
         download_success = await download_javhd(ms, url, user_id)
-    
+
     elif "fullxcinema.com" in url:
         fullxcinema_raw = url
         url = await fetch_fullxcinema(url)
         download_success = await download(url, query, ms)
-        
+
     elif "eporner.com" in url:
         rs = requests.get(url)
         soup = BeautifulSoup(rs.text, "html5lib")
@@ -456,7 +427,9 @@ async def queue_download(bot, query, url):
 
     print("Download Done ✅")
     await ms.edit("**Fetching Thumbnail.... 🔃**")
-    thumb_url = await get_thumbnail(video_url=url if not fullxcinema_raw else fullxcinema_raw)
+    thumb_url = await get_thumbnail(
+        video_url=url if not fullxcinema_raw else fullxcinema_raw
+    )
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
     await download_thumbnail(thumb_url, thumbnail_filename)
 
@@ -475,7 +448,7 @@ async def queue_download(bot, query, url):
         thumbnail_filename=thumbnail_filename,
         ms=ms,
         user_bot=user_bot,
-        downloadurl=url if not fullxcinema_raw else fullxcinema_raw,
+        downloadurl=url,
     )
 
 
@@ -500,7 +473,12 @@ async def single_download(bot, query, url, default_url=None):
     download_success = False
     fullxcinema_raw = None
 
-    if "javhd.today" in url or "javhd.icu" in url or "javtsunami.com" in url or "javgiga.com" in url:
+    if (
+        "javhd.today" in url
+        or "javhd.icu" in url
+        or "javtsunami.com" in url
+        or "javgiga.com" in url
+    ):
         download_success = await download_javhd(ms, url, user_id)
         if download_success == 0:
             await ms.edit("** Download Failed ❌ **")
@@ -508,11 +486,11 @@ async def single_download(bot, query, url, default_url=None):
     elif "fullxcinema.com" in url:
         fullxcinema_raw = url
         url = await fetch_fullxcinema(url)
-         
+
     else:
         if url.startswith("/dload"):
             url = "https://www.eporner.com" + url
-            
+
     download_success = await download(url, query, ms)
     if download_success == 0:
         await ms.edit("** Download Failed ❌ **")
@@ -521,7 +499,9 @@ async def single_download(bot, query, url, default_url=None):
     print("Download Done ✅")
     await ms.edit("**Fetching Thumbnail.... 🔃**")
 
-    thumbnail_url = await get_thumbnail(default_url if default_url else url if not fullxcinema_raw else fullxcinema_raw)
+    thumbnail_url = await get_thumbnail(
+        default_url if default_url else url if not fullxcinema_raw else fullxcinema_raw
+    )
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
     await download_thumbnail(thumbnail_url, thumbnail_filename)
 
@@ -540,5 +520,5 @@ async def single_download(bot, query, url, default_url=None):
         thumbnail_filename=thumbnail_filename,
         ms=ms,
         user_bot=user_bot,
-        downloadurl=url if not fullxcinema_raw else fullxcinema_raw,
+        downloadurl=url,
     )
