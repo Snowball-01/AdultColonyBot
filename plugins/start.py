@@ -14,7 +14,6 @@ from pyrogram.types import (
 from config import Config, Txt, temp
 from helper.database import db
 from helper.utils import humanbytes, b64_to_str
-from datetime import timedelta, datetime
 import time
 
 logger = logging.getLogger(__name__)
@@ -24,6 +23,22 @@ logger = logging.getLogger(__name__)
 async def start(client: Client, message: Message):
 
     if message.command[0] == "start" and len(message.command) == 2:
+        if message.command[1].startswith("verify"):
+            user_token = b64_to_str(message.command[1].split("_")[1])
+            if user_token in temp.TOKEN_VERIFY:
+                await message.reply_text(
+                    "> **Your token successfully verified and valid for: 24 Hour**",
+                    reply_to_message_id=message.id,
+                )
+                await db.add_token(message.from_user.id)
+                temp.TOKEN_VERIFY.remove(user_token)
+                return
+            else:
+                await message.reply_text(
+                    "> **Your token is invalid or Expired** ‼️", reply_to_message_id=message.id
+                )
+                return
+
         message_id = b64_to_str(message.command[1].split("_")[1])
         try:
             return await client.copy_message(
@@ -32,9 +47,7 @@ async def start(client: Client, message: Message):
                 message_id=int(message_id),
             )
         except:
-            return await message.reply_text(
-                "**ғɪʟᴇ ɪs ᴅᴇʟᴇᴛᴇᴅ ʙʏ ᴀᴅᴍɪɴ** ❄️", reply_to_message_id=message.id
-            )
+            return
 
     user = message.from_user
     button = InlineKeyboardMarkup(
