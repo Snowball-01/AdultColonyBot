@@ -250,7 +250,20 @@ def is_plan_expire(formatted_date):
     else:
         return False
 
+def is_token_expired(formatted_date):
 
+    # Convert the string back to a datetime object
+    formatted_next_day_datetime = datetime.strptime(formatted_date, "%Y-%m-%d %H:%M:%S")
+    
+    # Get the current date and time
+    now =  datetime.now()  
+    
+    # Compare the current date and time with the stored datetime
+    if now > formatted_next_day_datetime:
+        return True
+    else:
+        return False
+        
 async def decode_jav_links(p, a, c, k):
     def base_convert(number, base):
         """Convert a number to a string in a given base (up to base 36)."""
