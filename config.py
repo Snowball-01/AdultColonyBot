@@ -143,4 +143,4 @@ class temp(object):
     QUEUE = {}
     PENDING_DOWNLOADS = []
     PLAYLIST_DOWNLOAD = {}
-    TOKEN = {}
+    TOKEN_VERIFY = []
