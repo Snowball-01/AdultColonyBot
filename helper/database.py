@@ -13,13 +13,13 @@ class Database:
         self.col = self.db.users
         self.bot = self.db.bots
         self.dumpfiles = self.db.dumpfiles
-        self.tokens = self.db.tokens
 
     def new_user(self, id):
         return dict(
             id=int(id),
             join_date=datetime.date.today().isoformat(),
             user_type=dict(is_premium=False, plan="free", plan_expire_on=None),
+            token = None,
             ban_status=dict(
                 is_banned=False,
                 ban_duration=0,
@@ -43,23 +43,6 @@ class Database:
         }
         await self.dumpfiles.insert_one(dumpfileinfo)
         
-    
-    async def add_token(self, token, username):
-        checkToken = await self.tokens.find_one({"token": token})
-        if checkToken:
-            return
-        await self.tokens.insert_one({"token": token, "username": username})
-    
-    async def get_token(self, token):
-        token = await self.tokens.find_one({"token": token})
-        return token
-        
-    async def get_all_tokens(self):
-        cursor = self.tokens.find({})
-        tokens = []
-        async for document in cursor:
-            tokens.append(document)
-        return tokens
     
     async def get_files(self, link):
         cursor = self.dumpfiles.find({"link": link})
@@ -156,6 +139,27 @@ class Database:
         await self.col.update_one(
             {"id": int(user_id)}, {"$set": {"user_type": user_type}}
         )
+    
+    async def add_token(self, user_id):
+        # Get today's date
+        today = datetime.datetime.now()
+
+        # Calculate the date after one month
+        next_day = today + relativedelta(hours=24)
+        
+        # Format the result to include the full date, time, and seconds (but not microseconds or nanoseconds)
+        formatted_next_day = next_day.strftime("%Y-%m-%d %H:%M:%S")
+
+        await self.col.update_one(
+            {"id": int(user_id)}, {"$set": {"token": str(formatted_next_day)}}
+        )
+    
+    async def remove_token(self, id):
+        await self.col.update_one({"id": int(id)}, {"$set": {"token": None}})
+
+    async def get_token(self, id):
+        user = await self.col.find_one({"id": int(id)})
+        return user.get("token", None)
 
     async def remove_premium(self, id):
         user_type = dict(
