@@ -37,7 +37,7 @@ async def handle_token_expire(bot, cmd):
     chat_id = cmd.from_user.id
     
     user_status = await db.get_user_status(chat_id)
-    if user_status["plan"] == "free":
+    if user_status["plan"] == "free" and int(chat_id) not in Config.ADMIN:
         token_expire_on = await db.get_token(chat_id)
         if token_expire_on and is_token_expired(token_expire_on):
             await db.remove_token(chat_id)
