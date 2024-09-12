@@ -2,7 +2,7 @@ import random
 from pyrogram import Client, filters
 from helper.database import db
 from helper.utils import str_to_b64
-from down_and_up import fetch_shorturl
+from plugins.down_and_up import fetch_shorturl
 from pyrogram.types import *
 from config import Config, temp
 from uuid import uuid4
