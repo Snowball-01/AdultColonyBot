@@ -29,10 +29,10 @@ async def get_random_videos(client: Client, message: Message):
                 reply_markup=btn,
             )
     
+    dc = await message.reply_text("**Please Wait...**")
     files = await db.get_all_files()
     
     randomPick = random.choice(files)
     
-    dc = await message.reply_text("**Please Wait...**")
     await client.copy_message(message.chat.id ,int(Config.DUMP_VIDEOS), int(randomPick["msg_id"]))
     await dc.delete()
