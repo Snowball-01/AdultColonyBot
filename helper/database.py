@@ -51,6 +51,14 @@ class Database:
         async for document in cursor:
             dumpfile.append(document)
         return dumpfile if dumpfile else None
+    
+    async def get_all_files(self):
+        cursor = self.dumpfiles.find({})
+        dumpfile = []
+
+        async for document in cursor:
+            dumpfile.append(document)
+        return dumpfile if dumpfile else None
 
     async def add_user_bot(self, user_datas):
         if not await self.is_user_bot_exist(user_datas["user_id"]):
