@@ -24,7 +24,7 @@ async def handle_user_status(bot, cmd):
 
 async def handle_plan_expire(bot, cmd):
     chat_id = cmd.from_user.id
-    await db.add_user(bot, cmd)
+
     user_status = await db.get_user_status(chat_id)
     user_plan_expire_on = user_status["plan_expire_on"]
     if user_status["plan"] == "premium" and is_plan_expire(user_plan_expire_on):
@@ -33,14 +33,13 @@ async def handle_plan_expire(bot, cmd):
             f"Hᴇʏ, {cmd.from_user.mention}\n\n**Yᴏᴜʀ ᴘʟᴀɴ ɪs ᴇxᴘɪʀᴇᴅ ᴘʟᴇᴀsᴇ ᴜᴘᴅᴀᴛᴇ ʏᴏᴜʀ ᴘʟᴀɴ ᴛᴏ ɢᴇᴛ ᴀᴄᴄᴇss ᴏғ ᴀʟʟ ᴛʜᴇ ғᴇᴀᴛᴜʀᴇs ☹️**"
         )
 
-
 async def handle_token_expire(bot, cmd):
     chat_id = cmd.from_user.id
-    await db.add_user(bot, cmd)
+    
     user_status = await db.get_user_status(chat_id)
     if user_status["plan"] == "free" and int(chat_id) not in Config.ADMIN:
         token_expire_on = await db.get_token(chat_id)
         if token_expire_on and is_token_expired(token_expire_on):
             await db.remove_token(chat_id)
-
+    
     await cmd.continue_propagation()
