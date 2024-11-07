@@ -1,11 +1,11 @@
 services:
   - type: web
     plan: free
-    name: ProMegaDownloader
+    name: AdultColonyBot
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
-    repo: https://github.com/Snowball-01/PornHub-TgBot
+    repo: https://github.com/Snowball-01/AdultColonyBot
     branch: main
     autoDeploy: false
     envVars:
