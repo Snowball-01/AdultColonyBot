@@ -7,27 +7,4 @@ services:
     startCommand: python bot.py
     repo: https://github.com/Snowball-01/AdultColonyBot
     branch: main
-    autoDeploy: false
-    envVars:
-      - key: BOT_TOKEN
-        sync: false
-      - key: API_ID
-        sync: false
-      - key: API_HASH
-        sync: false
-      - key: FORCE_SUB
-        sync: false
-      - key: LOG_CHANNEL
-        sync: false
-      - key: DB_URL
-        sync: false
-      - key: START_PIC
-        sync: false
-      - key: ADMIN
-        sync: false
-      - key: STRING_API_ID
-        sync: false
-      - key: STRING_API_HASH
-        sync: false
-      - key: STRING_SESSION
-        sync: false
+    autoDeploy: true
