@@ -20,4 +20,3 @@ moviepy
 cloudscraper
 img2pdf
 python-dateutil
-spidermonkey
