@@ -8,7 +8,7 @@ from pyrogram import Client, __version__
 from pyrogram.raw.all import layer
 from config import Config
 from aiohttp import web
-from helper.database import db
+from utility.database import db
 from pytz import timezone
 from datetime import datetime
 from plugins.web_support import web_server

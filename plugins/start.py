@@ -1,5 +1,4 @@
 import random
-import re
 import shutil
 import psutil
 from pyrogram import Client, filters
@@ -12,8 +11,8 @@ from pyrogram.types import (
     InputMediaPhoto,
 )
 from config import Config, Txt, temp
-from helper.database import db
-from helper.utils import humanbytes, b64_to_str
+from utility.database import db
+from utility import b64_to_str, humanbytes
 import time
 
 logger = logging.getLogger(__name__)
@@ -60,7 +59,7 @@ async def start(client: Client, message: Message):
                 InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data="about"),
                 InlineKeyboardButton("• ʜᴇʟᴘ", callback_data="help"),
             ],
-            [InlineKeyboardButton("🌐 ᴡᴇʙsɪᴛᴇs", callback_data="websites")],
+            [InlineKeyboardButton("🌏 ᴡᴇʙsɪᴛᴇs", callback_data="websites")],
         ]
     )
 
@@ -121,7 +120,6 @@ async def cb_handler(client, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("• ʙᴀᴄᴋ", callback_data="start")],
-                    [InlineKeyboardButton("🍣 ᴊᴀᴘᴀɴᴇsᴇ", callback_data="jap")],
                     [
                         InlineKeyboardButton(
                             "xɴxx", switch_inline_query_current_chat="@Xnxx"
@@ -148,8 +146,7 @@ async def cb_handler(client, query: CallbackQuery):
                     ],
                     [
                         InlineKeyboardButton(
-                            "ғᴜʟʟx ᴄɪɴᴇᴍᴀ",
-                            switch_inline_query_current_chat="@FullxCinema",
+                            "ʜᴇɴᴛᴀɪ ғᴏx", switch_inline_query_current_chat="@HentaiFox"
                         )
                     ],
                 ]
@@ -171,47 +168,6 @@ async def cb_handler(client, query: CallbackQuery):
             ),
         )
 
-    elif data == "jap":
-        await query.message.edit_media(
-            InputMediaPhoto(random.choice(Config.PICS), Txt.JAP_TXT),
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [InlineKeyboardButton("• ʙᴀᴄᴋ", callback_data="websites")],
-                    [
-                        InlineKeyboardButton(
-                            "ᴊᴀᴘᴀɴ ʜᴅᴠ", switch_inline_query_current_chat="@JapanHdv"
-                        ),
-                        InlineKeyboardButton(
-                            "ᴊᴀᴘᴛᴇᴇɴ x", switch_inline_query_current_chat="@Japteenx"
-                        ),
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "ᴋɪssᴊᴀᴠ", switch_inline_query_current_chat="@KissJav"
-                        ),
-                        InlineKeyboardButton(
-                            "ᴊᴀᴠʜᴅ ᴛᴏᴅᴀʏ",
-                            switch_inline_query_current_chat="@JavHdToday",
-                        ),
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "ᴊᴀᴠʜᴅ ᴛsᴜɴᴀᴍɪ",
-                            switch_inline_query_current_chat="@JavTsunami",
-                        ),
-                        InlineKeyboardButton(
-                            "ᴊᴀᴠʜᴅ ɢɪɢᴀ",
-                            switch_inline_query_current_chat="@JavGiga",
-                        ),
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "ʜᴇɴᴛᴀɪ ғᴏx", switch_inline_query_current_chat="@HentaiFox"
-                        )
-                    ],
-                ]
-            ),
-        )
     elif data == "about":
         await query.message.edit_media(
             InputMediaPhoto(

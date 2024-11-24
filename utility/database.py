@@ -1,7 +1,7 @@
 import datetime
 import motor.motor_asyncio
 from config import Config
-from .utils import send_log
+from utility import send_log
 from dateutil.relativedelta import relativedelta
 
 
@@ -29,25 +29,23 @@ class Database:
         )
 
     async def add_files(
-        self, link, msg_id, file_id, file_name, file_size, file_type, mime_type, caption
+        self, user_id, file_id, file_name, file_size, file_quality, file_duration
     ):
         dumpfileinfo = {
-            "link": link,
-            'msg_id': msg_id,
+            "user_id": user_id,
             "file_id": file_id,
             "file_name": file_name,
             "file_size": file_size,
-            "file_type": file_type,
-            "mime_type": mime_type,
-            "caption": caption
+            "file_quality": file_quality,
+            "file_duration": file_duration,
         }
+        
         await self.dumpfiles.insert_one(dumpfileinfo)
         
     
-    async def get_files(self, link):
-        cursor = self.dumpfiles.find({"link": link})
+    async def get_file(self, file_name, file_quality):
+        cursor = self.dumpfiles.find({"file_name": file_name, "file_quality": file_quality})
         dumpfile = []
-
         async for document in cursor:
             dumpfile.append(document)
         return dumpfile if dumpfile else None

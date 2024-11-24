@@ -8,7 +8,7 @@ from pyrogram.types import (InlineKeyboardButton,
                             InlineQueryResultArticle, InputTextMessageContent)
 from pyrogram import Client
 from config import Config
-from helper.utils import extract_number_and_remove, extract_percentage
+from utility import extract_number_and_remove, extract_percentage
 
 
 @Client.on_inline_query()
@@ -24,7 +24,7 @@ async def search(client, InlineQuery: InlineQuery):
 
         if userquery.isnumeric():
             page = userquery
-            userquery = 'bbc'
+            userquery = 'russian'
         else:
             number, string_without_number = await extract_number_and_remove(
                 userquery)
@@ -35,7 +35,7 @@ async def search(client, InlineQuery: InlineQuery):
                 page = 1
 
             if userquery == "":
-                userquery = 'bbc'
+                userquery = 'russian'
 
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{Config.API}/xnxx/search?key={userquery}&page={page}') as resp:
@@ -617,22 +617,6 @@ async def search(client, InlineQuery: InlineQuery):
     await backend.close()
 
     for vid in videos:
-        try:
-            pornstars = ", ".join(v for v in vid.pornstars)
-            categories = ", ".join(v for v in vid.categories)
-            tags = ", #".join(v for v in vid.tags)
-        except:
-            pornstars = "N/A"
-            categories = "N/A"
-            tags = "N/A"
-        msg = (f"**TITLE** : `{vid.title}`\n"
-               f"**DURATION** : `{vid.duration}`\n"
-               f"VIEWS : `{vid.views}`\n\n"
-               f"**{pornstars}**\n"
-               f"Categories : {categories}\n\n"
-               f"{tags}"
-               f"Link : {vid.url}")
-
         results.append(InlineQueryResultArticle(
             title=vid.title,
             input_message_content=InputTextMessageContent(

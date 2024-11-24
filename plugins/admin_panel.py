@@ -1,6 +1,6 @@
 import traceback
 from config import Config
-from helper.database import db
+from utility.database import db
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import Client, filters
 from pyrogram.errors import (
@@ -10,8 +10,9 @@ from pyrogram.errors import (
     PeerIdInvalid,
 )
 import os, sys, time, asyncio, logging, datetime
-from helper.utils import start_clone_bot, client
+from utility import send_log, start_clone_bot
 from plugins.session import generate_session
+from utility.helper import client
 from .check_user_status import (
     handle_user_status,
     handle_plan_expire,
@@ -145,7 +146,6 @@ async def ban(c: Client, m: Message):
             )
 
         await db.ban_user(user_id, ban_duration, ban_reason)
-        print(ban_log_text)
         await m.reply_text(ban_log_text, quote=True)
     except:
         traceback.print_exc()
@@ -182,7 +182,6 @@ async def unban(c: Client, m: Message):
                 f"\n\nUser notification failed! \n\n`{traceback.format_exc()}`"
             )
         await db.remove_ban(user_id)
-        print(unban_log_text)
         await m.reply_text(unban_log_text, quote=True)
     except:
         traceback.print_exc()

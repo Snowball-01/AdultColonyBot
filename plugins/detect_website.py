@@ -1,20 +1,18 @@
-import asyncio
 import os
-import random
 import re
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from helper.utils import spankbang_playlist_fetch, filter_spankbang_playlist, str_to_b64
+from utility import spankbang_playlist_fetch, filter_spankbang_playlist, str_to_b64
 from uuid import uuid4
 from config import temp
-from helper.hetnaifox import convert_images_to_pdf
+from utility.hetnaifox import convert_images_to_pdf
 import aiohttp
 from config import Config
-from helper.database import db
-from plugins.down_and_up import fetch_shorturl
+from utility.database import db
+from utility import fetch_shorturl
 
 
-regex_search = r"(?:https?:\/\/)?(?:www\.)?(?:spankbang\.party|spankbang\.com|fullxcinema\.com|pornhub\.com|pornhub\.org|xnxx\.com|xvideos\.com|japanhdv\.com|javhd\.today|javhd\.icu|javtsunami\.com|javgiga.com|japteenx\.com|kissjav\.com|xhamster\.com|hentaifox\.com|eporner\.com)"
+regex_search = r"(?:https?:\/\/)?(?:www\.)?(?:spankbang|fullxcinema|pornhub|xnxx|xvideos|japanhdv\.com|javhd\.today|javhd\.icu|javtsunami\.com|javgiga.com|japteenx\.com|kissjav\.com|xhamster|hentaifox\.com|eporner\.com)"
 
 
 @Client.on_message(filters.private & filters.regex(regex_search))
@@ -22,7 +20,7 @@ async def handle_option(bot: Client, message: Message):
 
     user_status = await db.get_user_status(message.from_user.id)
 
-    if user_status["plan"] == "free" and int(message.from_user.id) not in Config.ADMIN:
+    if user_status["plan"] == "free" and int(message.from_user.id) not in Config.ADMIN and Config.SHORTENER_API:
         token = await db.get_token(message.from_user.id)
         if not token:
             tokenid = uuid4().hex[:16]

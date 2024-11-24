@@ -6,7 +6,7 @@ import logging
 import aiohttp
 import aiofiles
 import img2pdf
-from helper.utils import progress_for_pyrogram, download_thumbnail
+from utility import progress_for_pyrogram, download_thumbnail
 from config import temp
 from PIL import Image
 

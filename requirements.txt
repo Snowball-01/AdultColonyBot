@@ -4,7 +4,7 @@ aiohttp
 psutil
 python-ffmpeg
 pornhub-api==0.2.0
-youtube-dl
+yt-dlp
 Pillow
 pytz
 dnspython
@@ -20,3 +20,4 @@ moviepy
 cloudscraper
 img2pdf
 python-dateutil
+httpx
