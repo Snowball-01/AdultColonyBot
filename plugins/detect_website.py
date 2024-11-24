@@ -38,14 +38,14 @@ async def handle_option(bot: Client, message: Message):
 
     if "hentaifox.com" in message.text:
 
-        if message.from_user.id in temp.PENDING_DOWNLOADS:
+        if message.from_user.id in temp.IN_QUEUE_DOWNLOADS:
             return await message.reply_text(
                 "**☘️ ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ᴡʜɪʟᴇ ᴘʀᴇᴠɪᴏᴜs ᴏɴᴇ ɪs ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ...**",
                 reply_to_message_id=message.id,
             )
 
         else:
-            temp.PENDING_DOWNLOADS.append(message.from_user.id)
+            temp.IN_QUEUE_DOWNLOADS.append(message.from_user.id)
 
         process = await message.reply_sticker(
             "CAACAgUAAxkBAAEL6lNmHNWZGZ_A0e2WEqxDcrDILHOZ9wACpwADyJRkFGCmdrVn5RydNAQ",

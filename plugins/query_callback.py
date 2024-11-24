@@ -12,7 +12,7 @@ from pyrogram.types import (
 )
 import requests
 from utility.database import db
-from plugins.down_and_up import queueDownload, singleDownload, uploadVideo
+from plugins.down_and_up import queueDownload, singleDownload, uploadVideo, spankbangPlaylistDownload
 from config import Config, temp, Txt
 from queue import Queue
 from yt_dlp import YoutubeDL, DownloadError
@@ -85,6 +85,7 @@ async def handle_spankbang_playlist(bot: Client, query: CallbackQuery):
     ms = await query.message.reply_text("**ᴘʟᴀʏʟɪsᴛ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ɪs sᴛᴀʀᴛᴇᴅ ✔**")
 
     # handle spankbang playlist issue
+    await spankbangPlaylistDownload(bot, query)
 
     temp.PLAYLIST_DOWNLOAD.pop(user, None)
     await query.message.reply_text(
