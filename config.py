@@ -9,11 +9,11 @@ class Config(object):
      # pyro client config
     API_ID = os.environ.get("API_ID", "27060846")  # ⚠️ Required
     API_HASH = os.environ.get("API_HASH", "8f39072a61dbb296f38e4ff2b6cbe478")  # ⚠️ Required
-    BOT_TOKEN = os.environ.get("BOT_TOKEN", "7066676241:AAFWrQb1nrTLZWVK7VfvJQ20NiCVWqzUWqg")  # ⚠️ Required
-    BOT_USERNAME = os.environ.get("BOT_USERNAME", "ComickioBot")  # ⚠️ Required
+    BOT_TOKEN = os.environ.get("BOT_TOKEN", "7040879932:AAHLhmS8TCsCJBQLC44S507RRnKsIMgZVmM")  # ⚠️ Required
+    BOT_USERNAME = os.environ.get("BOT_USERNAME", "AdultColonyBot")  # ⚠️ Required
 
     # database config
-    DB_URL = os.environ.get("DB_URL", "mongodb://localhost:27017/")  # ⚠️ Required
+    DB_URL = os.environ.get("DB_URL", "mongodb+srv://ADULTCOLONY:ADULTCOLONY@cluster0.x53fa1k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")  # ⚠️ Required
 
 
     # other configs
@@ -23,7 +23,7 @@ class Config(object):
     FORCE_SUB = os.environ.get('FORCE_SUB', 'SnowDevs')  # ⚠️ Required without [@]
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1001971176803"))  # ⚠️ Required
     SHORTENER_API = os.environ.get("SHORTENER_API", "https://runurl.in/api?api=d0e0909f2c1e5f1130e4b643cdba7e39a28341eb&url=") # ⚠️ SHOULD BE LIKE THIS "https://runurl.in/api?api=d0e0909f2c1e5f1130e4b643cdba7e39a28341eb&url="
-    DUMP_VIDEOS = int(os.environ.get("DUMP_VIDEOS", "-1002023195189")) # ⚠️ Required
+    DUMP_VIDEOS = int(os.environ.get("DUMP_VIDEOS", "-1002129817205")) # ⚠️ Required
     API = os.environ.get("API", "http://195.35.9.211:2024") # ⚠️ Must not ends with '/'
 
     # wes response configuration
@@ -63,13 +63,6 @@ class Txt(object):
 💫 Xvideos
 💫 Xhamster
 💫 SpankBang
-💫 FullxCinema
-💫 JapanHdv
-💫 JapTeenx
-💫 KissJav
-💫 JavHdToday
-💫 JavTsunami
-💫 JavGiga
 💫 Hentaifox
 
 ❗ Dᴇᴠᴇʟᴏᴘᴇʀ :- <a href=https://t.me/Snowball_official>ѕησωвαℓℓ ❄️</a>
