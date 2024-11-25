@@ -167,7 +167,7 @@ async def qualityDownload(bot: Client, query: CallbackQuery):
     ydl_opts = {
         "outtmpl": download_path,
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "progress_hooks": [lambda d: progress_hook(d, queue)],
+        # "progress_hooks": [lambda d: progress_hook(d, queue)],
     }
 
     # Define the blocking download function

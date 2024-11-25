@@ -128,7 +128,7 @@ async def queueDownload(bot: Client, query: CallbackQuery):
         ydl_opts = {
             "outtmpl": download_path,
             "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-            "progress_hooks": [lambda d: progress_hook(d, queue)],
+            # "progress_hooks": [lambda d: progress_hook(d, queue)],
         }
 
         def download_video():
@@ -150,6 +150,7 @@ async def queueDownload(bot: Client, query: CallbackQuery):
                 await ms.edit("**Download completed successfully! ✅**")
             else:
                 await ms.edit("**Download failed. ❌**")
+                continue
         
         # Upload video after download
         await uploadVideo(bot, query, ms, download_path, item["quality"], item)
@@ -189,7 +190,7 @@ async def spankbangPlaylistDownload(bot: Client, query: CallbackQuery):
             ydl_opts = {
                 "outtmpl": download_path,
                 "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-                "progress_hooks": [lambda d: progress_hook(d, queue)],
+                # "progress_hooks": [lambda d: progress_hook(d, queue)],
             }
 
             # Define the blocking function for yt-dlp
