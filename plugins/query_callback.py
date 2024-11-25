@@ -125,54 +125,81 @@ async def handle_upgrade_callback(bot: Client, query: CallbackQuery):
 async def qualityDownload(bot: Client, query: CallbackQuery):
     userId = query.from_user.id
 
+    # Check if user has a valid video info in the temporary queue
     if userId not in temp.VIDEOINFO:
-        return query.answer(text=f"Hey {query.from_user.first_name},\nYour queue has been cleared. If you want to download this video, please send it again.", show_alert=True)
-    
+        return await query.answer(
+            text=(
+                f"Hey {query.from_user.first_name},\n"
+                "Your queue has been cleared. If you want to download this video, please send it again."
+            ),
+            show_alert=True,
+        )
+
+    # Notify user of the download process
     ms = await query.message.edit("**Downloading 📦**")
     quality = query.data.split('_')[1]
     videoInfo = temp.VIDEOINFO[userId]
     queue = Queue()
 
+    # Sanitize file name
     sanitized_title = re.sub(r'[<>:"/\\|?*]', '', videoInfo.get('title'))
+
+    # Check for pre-cached file
     filePreFound = await db.get_file(sanitized_title, quality)
     if filePreFound:
         for file in filePreFound:
-            caption = f'> **File Name:** `{file["file_name"]}`\n\n> **File Size:** `{file["file_size"]}`\n> **Quality:** `{file["file_quality"]}`\n> **Duration:** `{file["file_duration"]}`\n> **Powered By - **[{Config.BOT_USERNAME}](https://t.me/{Config.BOT_USERNAME})** 🔞**'
-            await bot.send_cached_media(chat_id=userId, file_id=file["file_id"], caption=caption)
+            caption = (
+                f'> **File Name:** `{file["file_name"]}`\n\n'
+                f'> **File Size:** `{file["file_size"]}`\n'
+                f'> **Quality:** `{file["file_quality"]}`\n'
+                f'> **Duration:** `{file["file_duration"]}`\n'
+                f'> **Powered By - **[{Config.BOT_USERNAME}](https://t.me/{Config.BOT_USERNAME})** 🔞**'
+            )
+            await bot.send_cached_media(
+                chat_id=userId, file_id=file["file_id"], caption=caption
+            )
             return
-        
+
+    # Define download path
     download_path = os.path.join(f"downloads/{userId}", f"{sanitized_title}.mkv")
 
+    # yt-dlp options
     ydl_opts = {
         "outtmpl": download_path,
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
         "progress_hooks": [lambda d: progress_hook(d, queue)],
     }
 
-    # Define the blocking function for yt-dlp
+    # Define the blocking download function
     def download_video():
         with YoutubeDL(ydl_opts) as ydl:
             ydl.download([videoInfo["videos"].get(quality)])
 
-    # Run the blocking download function in a thread
-    loop = asyncio.get_event_loop()
+    # Use asyncio.run_in_executor to run blocking downloads
+    loop = asyncio.get_running_loop()  # Use the running event loop
     progress_task = asyncio.create_task(handle_progress(queue, ms))
 
     try:
-        # Run yt-dlp in a separate thread
+        # Execute download in a thread pool
         await loop.run_in_executor(None, download_video)
     except DownloadError:
         await ms.edit("**Sorry, an error occurred during the download. ❌**")
-        queue.put(None)
-        await progress_task
-        return
     finally:
-        queue.put(None)
-        await progress_task
+        queue.put(None)  # Signal progress task to exit
+        await progress_task  # Ensure progress task completes
 
-    await ms.edit("**Download completed successfully! ✅**")
-    await uploadVideo(bot, query, ms, download_path, quality)
-    temp.IN_QUEUE_DOWNLOADS.remove(userId)
+    # Finalize and upload the video
+    if os.path.exists(download_path):
+        await ms.edit("**Download completed successfully! ✅**")
+        await uploadVideo(bot, query, ms, download_path, quality)
+    else:
+        await ms.edit("**Download failed. ❌**")
+
+    # Clean up user from IN_QUEUE_DOWNLOADS
+    if userId in temp.IN_QUEUE_DOWNLOADS:
+        temp.IN_QUEUE_DOWNLOADS.remove(userId)
+
+
 
 @Client.on_message(filters.private & filters.command("cc"))
 async def handle_clear_queue(bot: Client, message: Message):

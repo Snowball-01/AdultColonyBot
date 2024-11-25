@@ -88,6 +88,8 @@ async def uploadVideo(bot:Client, query: CallbackQuery, message, path: str, qual
     except Exception as e:
         print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
         return await ms.edit('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
+    
+
 
 # Single Download 🍃
 async def singleDownload(bot:Client, query: CallbackQuery, link: str):
@@ -108,51 +110,59 @@ async def singleDownload(bot:Client, query: CallbackQuery, link: str):
     
     await query.message.edit(text="**Chose your desire quality**", reply_markup=InlineKeyboardMarkup(qualityBtn))
 
+
+
 # Queue Download
 async def queueDownload(bot: Client, query: CallbackQuery):
-
     userId = query.from_user.id
     arrayVideoInfo = temp.QUEUE[userId]
 
+    # Process videos in the queue
     for idx, item in enumerate(arrayVideoInfo):
-        ms = await query.message.reply_text(f"** 📦 Downloading Video From Queue {idx+1} **")
-        userId = query.from_user.id
+        ms = await query.message.reply_text(f"** 📦 Downloading Video From Queue {idx + 1} **")
         queue = Queue()
 
         sanitized_title = re.sub(r'[<>:"/\\|?*]', '', item.get('title'))
         download_path = os.path.join(f"downloads/{userId}", f"{sanitized_title}.mkv")
 
         ydl_opts = {
-        "outtmpl": download_path,
-        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "progress_hooks": [lambda d: progress_hook(d, queue)],
+            "outtmpl": download_path,
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "progress_hooks": [lambda d: progress_hook(d, queue)],
         }
 
-        # Define the blocking function for yt-dlp
         def download_video():
             with YoutubeDL(ydl_opts) as ydl:
                 ydl.download([item["videos"].get(item["quality"])])
 
-        # Run the blocking download function in a thread
-        loop = asyncio.get_event_loop()
+        # Use asyncio.run_in_executor for the download
+        loop = asyncio.get_running_loop()
         progress_task = asyncio.create_task(handle_progress(queue, ms))
 
         try:
-            # Run yt-dlp in a separate thread
             await loop.run_in_executor(None, download_video)
         except DownloadError:
             await ms.edit("**Sorry, an error occurred during the download. ❌**")
-            queue.put(None)
-            await progress_task
-            return
         finally:
-            queue.put(None)
-            await progress_task
-            await ms.edit("**Download completed successfully! ✅**")
+            queue.put(None)  # Signal progress coroutine to exit
+            await progress_task  # Ensure progress task completes
+            if os.path.exists(download_path):
+                await ms.edit("**Download completed successfully! ✅**")
+            else:
+                await ms.edit("**Download failed. ❌**")
         
+        # Upload video after download
         await uploadVideo(bot, query, ms, download_path, item["quality"], item)
-    
-    await query.message.reply_text("<b>ᴀʟʟ ᴠɪᴅᴇᴏs ᴏғ ᴛʜɪs ᴘʟᴀʏʟɪsᴛ ɪs ᴅᴏᴡɴʟᴏᴀᴅᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</b>\n\n<b> 🍀 Developer </b> <a href=https://t.me/Snowball_official>ѕησωвαℓℓ ❄️</a>", disable_web_page_preview=True,)
+
+    # All downloads complete
+    await query.message.reply_text(
+        "<b>ᴀʟʟ ᴠɪᴅᴇᴏs ᴏғ ᴛʜɪs ᴘʟᴀʏʟɪsᴛ ɪs ᴅᴏᴡɴʟᴏᴀᴅᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</b>\n\n"
+        "<b> 🍀 Developer </b> <a href=https://t.me/Snowball_official>ѕησωвαℓℓ ❄️</a>",
+        disable_web_page_preview=True,
+    )
+
+
+
 
 # SpankbangPlaylistDownload
 async def spankbangPlaylistDownload(bot: Client, query: CallbackQuery):
