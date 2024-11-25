@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+import sys
 import time
 import logging
 import aiohttp
@@ -106,8 +107,10 @@ async def convert_images_to_pdf(image_urls, bot, message, source, title, process
         # Clean up files using asyncio
         os.remove(output)
         os.remove(thumbnail_filename)
-        temp.PENDING_DOWNLOADS.remove(message.from_user.id)
+        temp.IN_QUEUE_DOWNLOADS.remove(message.from_user.id)
 
     except Exception as e:
         # Log any errors that occur
-        logging.error('Error occurred:', exc_info=True)
+        print(
+            "Error on line {}".format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e
+        )

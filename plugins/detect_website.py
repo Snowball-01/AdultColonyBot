@@ -5,7 +5,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from utility import spankbang_playlist_fetch, filter_spankbang_playlist, str_to_b64
 from uuid import uuid4
 from config import temp
-from utility.hetnaifox import convert_images_to_pdf
+from utility.hentaifox import convert_images_to_pdf
 import aiohttp
 from config import Config
 from utility.database import db
