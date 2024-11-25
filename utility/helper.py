@@ -6,12 +6,12 @@ from queue import Queue
 import sys
 from bs4 import BeautifulSoup
 from pyrogram.types import CallbackQuery
-import random
 import re
 import time
 import aiofiles
 import aiohttp
 from pyrogram import Client
+from PIL import Image
 from pytz import timezone
 from config import Config, temp
 from config import Txt
@@ -292,3 +292,29 @@ async def extract_percentage(string):
         return percentage
     else:
         return None
+
+
+async def fix_thumb(thumb):
+    width = 0
+    height = 0
+    try:
+        if thumb != None:
+            # Open the image file
+            with Image.open(thumb) as img:
+                width = img.width
+                height = img.height
+                # Resize the image if its height is greater than 320 pixels
+                if height > 320:
+                    ratio = 320 / height
+                    width = int(width * ratio)
+                    height = 320
+                    img = img.resize((width, height), Image.LANCZOS)
+                    img.convert("RGB").save(thumb)
+                else:
+                    # Resize the image
+                    resized_img = img.resize((width, height))
+                    resized_img.convert("RGB").save(thumb)
+    except Exception as e:
+        print(e)
+        thumb = None
+    return width, height, thumb

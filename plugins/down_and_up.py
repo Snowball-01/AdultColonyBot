@@ -12,6 +12,7 @@ from queue import Queue
 from yt_dlp import YoutubeDL, DownloadError
 from utility.database import db
 from utility import *
+from utility.helper import fix_thumb
 
 
 
@@ -27,13 +28,14 @@ async def uploadVideo(bot:Client, query: CallbackQuery, message, path: str, qual
         videoInfo = temp.VIDEOINFO[userId]
 
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
-    thumbnail = await download_thumbnail(videoInfo["thumbnail"], thumbnail_filename)
+    await download_thumbnail(videoInfo["thumbnail"], thumbnail_filename)
+    width, height, thumb = await fix_thumb(thumbnail_filename)
     file_size = humanbytes(os.path.getsize(path))
     caption = f"> **File Name:** `{videoInfo['title']}`\n\n> **File Size:** `{file_size}`\n> **Quality:** `{quality}`\n> **Duration:** `{videoInfo['duration']}`\n> **Powered By - **[{Config.BOT_USERNAME}](https://t.me/{Config.BOT_USERNAME})** 🔞**"
 
 
     try:
-        filz = await bot.send_video(chat_id=Config.DUMP_VIDEOS, video=path, progress=progress_for_pyrogram, thumb=thumbnail, caption=caption, progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
+        filz = await bot.send_video(chat_id=Config.DUMP_VIDEOS, video=path, progress=progress_for_pyrogram, thumb=thumb, caption=caption, progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
         await db.add_files(userId, filz.video.file_id, videoInfo["title"], file_size, quality, videoInfo["duration"])
         uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
         await bot.copy_message(query.from_user.id, filz.chat.id, filz.id,  reply_markup=InlineKeyboardMarkup([[
@@ -43,7 +45,7 @@ async def uploadVideo(bot:Client, query: CallbackQuery, message, path: str, qual
                             )
                         ]]))
         os.remove(path)
-        os.remove(thumbnail_filename)
+        os.remove(thumb)
         try:
             if item:
                 temp.QUEUE.pop(userId)
