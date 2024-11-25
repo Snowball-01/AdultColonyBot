@@ -19,9 +19,34 @@ from utility.helper import fix_thumb
 # Upload Video 🍃
 async def uploadVideo(bot:Client, query: CallbackQuery, message, path: str, quality:str, item: object = None):
     userId = query.from_user.id
-    ms = await message.edit("⚠️ ** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **\n** ᴛʀʏɪɴɢ ᴛᴏ ᴜᴘʟᴏᴀᴅ... **")
 
-    # uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(fileInfo['msg_id']))}"
+    if os.path.getsize(path) > 2000000000:
+        user_bot = await db.get_user_bot(Config.ADMIN[0])
+        if user_bot:
+            app = await start_clone_bot(client(user_bot["session"]))
+        else:
+            os.remove(path)
+            try:
+                if item:
+                    temp.QUEUE.pop(userId)
+                else:
+                    temp.VIDEOINFO.pop(userId)
+            except:
+                pass
+            return await ms.edit("** File Above 2GB Doesn't Support ❗**")
+
+    elif os.path.getsize(path) > 4000000000:
+        os.remove(path)
+        try:
+            if item:
+                temp.QUEUE.pop(userId)
+            else:
+                temp.VIDEOINFO.pop(userId)
+        except:
+            pass
+        return await ms.edit("** Can't Upload File Above Size 4GB❗**")
+    
+    ms = await message.edit("⚠️ ** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **\n** ᴛʀʏɪɴɢ ᴛᴏ ᴜᴘʟᴏᴀᴅ... **")
     if item:
         videoInfo = item
     else:
@@ -30,12 +55,18 @@ async def uploadVideo(bot:Client, query: CallbackQuery, message, path: str, qual
     thumbnail_filename = f"thumbnail_{random.randint(1000, 9999)}.jpg"
     await download_thumbnail(videoInfo["thumbnail"], thumbnail_filename)
     width, height, thumb = await fix_thumb(thumbnail_filename)
+
+
     file_size = humanbytes(os.path.getsize(path))
     caption = f"> **File Name:** `{videoInfo['title']}`\n\n> **File Size:** `{file_size}`\n> **Quality:** `{quality}`\n> **Duration:** `{videoInfo['duration']}`\n> **Powered By - **[{Config.BOT_USERNAME}](https://t.me/{Config.BOT_USERNAME})** 🔞**"
-
+    
 
     try:
-        filz = await bot.send_video(chat_id=Config.DUMP_VIDEOS, video=path, progress=progress_for_pyrogram, thumb=thumb, caption=caption, progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
+        if os.path.getsize(path) > 2000000000:
+            filz = await app.send_video(chat_id=Config.DUMP_VIDEOS, video=path, progress=progress_for_pyrogram, thumb=thumb, caption=caption, progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
+        else:
+            filz = await bot.send_video(chat_id=Config.DUMP_VIDEOS, video=path, progress=progress_for_pyrogram, thumb=thumb, caption=caption, progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
+
         await db.add_files(userId, filz.video.file_id, videoInfo["title"], file_size, quality, videoInfo["duration"])
         uuid = f"{Config.BOT_USERNAME}_{str_to_b64(str(filz.id))}"
         await bot.copy_message(query.from_user.id, filz.chat.id, filz.id,  reply_markup=InlineKeyboardMarkup([[
